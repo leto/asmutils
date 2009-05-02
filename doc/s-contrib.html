@@ -1,0 +1,508 @@
+<HTML
+><HEAD
+><TITLE
+>Contribution guidelines</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="PREVIOUS"
+TITLE="Debugging your code"
+HREF="s-debug.html"><LINK
+REL="NEXT"
+TITLE="Optimization, tips and tricks"
+HREF="s-optimize.html"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Asmutils HOWTO</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="s-debug.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="s-optimize.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-CONTRIB"
+></A
+>5. Contribution guidelines</H1
+><P
+>Asmutils would never become what they are without submissions
+from various hackers. As any open project, it relies much
+on contributions. Hence, if you've got an intention/inspiration
+to contribute something, you're welcome!</P
+><P
+>So, if you are the person who follows the challenge of UNIX
+assembly programming and wants your code to be included
+into <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>, do examine this section carefully.
+It contains extremely important information, your contribution
+may not be accepted if you ignore suggestions below.</P
+><P
+>I think most of what is said in this section is evident
+to experienced developers of distributed free software,
+but if you are not the one, please read this carefully.</P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN263"
+></A
+>5.1. First step</H2
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Before you begin</I
+></SPAN
+> make sure you are using
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>the latest</I
+></SPAN
+> release of <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>
+(available from the website),
+contributions based on old versions are (usually) rejected.</P
+><P
+>Usually, a good idea is to get current code from the CVS repository
+(<TT
+CLASS="FILENAME"
+>cvs.sourceforge.net:/cvsroot/asm</TT
+>,
+module name is "asmutils"):
+<PRE
+CLASS="SCREEN"
+>$ export CVS_RSH=ssh
+$ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/asm login
+
+(when prompted for password, just press [Enter].
+
+$ cvs -z9 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/asm co asmutils</PRE
+>
+
+Thus you get <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>the latest</I
+></SPAN
+> code for sure,
+as it may differ from the latest release.
+If you do not know how to deal with CVS, use the latest release.</P
+><P
+>So, get the latest <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> code
+and look what is already done. 
+Even if a program you want to contribute is not there, look at the
+<A
+HREF="http://linuxassembly.org/asmutils.html"
+TARGET="_top"
+>ChangeLog</A
+>,
+or contact maintainer first; it could happen that somebody is already doing
+(or has already done) what you're only going to do (ditto if you want to
+improve existing utils). This is very important! Asmutils are growing rapidly,
+do not duplicate effort of other hackers.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="S-CONTRIB-SOURCE"
+></A
+>5.2. Source code requirements</H2
+><P
+>Here are few obvious requirements for the source code:
+
+<P
+></P
+><UL
+><LI
+><P
+>you should use <B
+CLASS="COMMAND"
+>nasm</B
+> assembler</P
+></LI
+><LI
+><P
+>you should use supplied macro set</P
+></LI
+><LI
+><P
+>you should not use libc or any other external library</P
+></LI
+></UL
+></P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>I can accept utilities written in <B
+CLASS="COMMAND"
+>gas</B
+>,
+but this will give me just more boring work of converting them to
+<B
+CLASS="COMMAND"
+>nasm</B
+> syntax and <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>
+macro set. This is to be avoided when possible. I mean, do it on your own :)</P
+></BLOCKQUOTE
+></DIV
+><P
+>While writing your program take care of portability!
+Basically, this means:
+
+<P
+></P
+><UL
+><LI
+><P
+>no <TT
+CLASS="FUNCTION"
+>int 0x80</TT
+> (or similar) calls directly,
+only <TT
+CLASS="FUNCTION"
+>sys_xxx</TT
+> macros</P
+></LI
+><LI
+><P
+>no ELF or kernel specific bizarre hacks,
+such as self-modifying code,
+writable <TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>, etc.</P
+></LI
+><LI
+><P
+>no 0 instead of <TT
+CLASS="LITERAL"
+>STDIN</TT
+>,
+9 instead of <TT
+CLASS="LITERAL"
+>SIGKILL</TT
+>,
+and so on</P
+></LI
+><LI
+><P
+>no OS specific calls, until a task can be done in a more generic way;
+try to use only POSIX/BSD syscall subset</P
+></LI
+></UL
+></P
+><P
+>I think you've got an idea. Just try to imagine your program on other OS,
+and ask yourself: what one will need to do make it run?
+what should I do to make compile on as many OSes as possible?
+If your program is not OS specific, try to set <TT
+CLASS="FUNCTION"
+>OS</TT
+>
+parameter to some other value
+(e.g. <B
+CLASS="COMMAND"
+>make OS=FREEBSD KERNEL=44</B
+>) and see what happens.
+Even your program is OS specific (e.g. <B
+CLASS="COMMAND"
+>lsmod</B
+>),
+at least try to make it readable.</P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Warning</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>Submissions that eliminate these simple rules are rejected.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>And of course, your code must do something useful, not just be written
+according to the above requirements :). Usual UNIX utils are preferred,
+but you can also contribute your very own program.
+Keep in mind that <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> are not just fun.
+They are used in (and targeted on) small distributions and embedded systems.
+Thus, they should be as small as possible, use very few memory,
+and be as fast as kernel. Neither more, nor less.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN315"
+></A
+>5.3. Last step</H2
+><P
+>When, finally, you think your program is ready,
+here again comes administrativia.</P
+><P
+>First, try to test your program. If it still works, rest a day, then look
+at it again.. I mean, I know you're very excited that your program works,
+but just try to look what now you can improve; do not send maintainer a new
+version every day, this will save him (and you) from the mess of versions.</P
+><P
+>Next, try to compile your program with different parameters from
+<TT
+CLASS="FILENAME"
+>MCONFIG</TT
+>: at least compile it with different
+<TT
+CLASS="FUNCTION"
+>KERNEL</TT
+> and <TT
+CLASS="FUNCTION"
+>OPTIMIZE</TT
+> parameters.
+If your program is intended to be portable (which is recommended),
+also try another <TT
+CLASS="FUNCTION"
+>OS</TT
+> parameter. As a rule, compiling
+with <TT
+CLASS="FUNCTION"
+>OS=LINUX</TT
+> and <TT
+CLASS="FUNCTION"
+>OS=FREEBSD</TT
+>
+cleans out most (but not necessary all) issues.
+Also, be aware of code size difference when <TT
+CLASS="FUNCTION"
+>OPTIMIZE=SPEED</TT
+>
+and/or <TT
+CLASS="FUNCTION"
+>SYSCALL=LIBC</TT
+> are set -- explicit 
+short jumps can became out of range.
+Nowdays a good idea is to use just <TT
+CLASS="FUNCTION"
+>jmp</TT
+> instruction,
+and let nasm take care of jump offset.</P
+><P
+>Try to include some documentation in the source.
+If your code uses 486+ instructions, please specify CPU requirements
+(especially if MMX, 3DNOW, SSE, etc are used) and use
+nasm <TT
+CLASS="FUNCTION"
+>CPU</TT
+> directive accordingly.
+Include comments along your code, especially around somewhat
+cryptic parts that are hard (as you feel) to understand initially.
+(but do not document every step, like
+<TT
+CLASS="FUNCTION"
+>xor eax,eax	;set eax to zero</TT
+>, etc).</P
+><P
+>New programs should be sent to project maintainer, while improvements
+of existing -- to particular util maintainer(s) first.</P
+><P
+>Since <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> programs are usually quite small,
+please send full source of program instead of patches when possible;
+if you choose to send a patch, make sure that it is
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>against the latest CVS version</I
+></SPAN
+>,
+i.e. do a checkout right before creating your patch,
+or create patch using <B
+CLASS="COMMAND"
+>cvs diff</B
+>.</P
+><P
+>Sometimes maintainer will modify your code a bit.
+Please use that modified code for next program version.</P
+><P
+>Isn't it that simple? :)</P
+><P
+>With any additional questions refer to the <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>
+website or contact <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> maintainer.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN342"
+></A
+>5.4. Porting</H2
+><P
+><SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> are quite portable
+to any i386 (POSIX/UNIX) OS; if you are interested in
+<SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> running on your OS, I am willing to help.
+However of course I will need that OS, so you will have to donate me CD's
+(do not ask me to download gigs from the net!).
+Drop me a mail if you are interested.</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="s-debug.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="s-optimize.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Debugging your code</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Optimization, tips and tricks</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

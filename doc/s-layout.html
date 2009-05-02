@@ -1,0 +1,220 @@
+<HTML
+><HEAD
+><TITLE
+>Program layout</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="PREVIOUS"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="NEXT"
+TITLE="Include files description"
+HREF="s-include.html"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Asmutils HOWTO</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="s-include.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-LAYOUT"
+></A
+>2. Program layout</H1
+><P
+>There are three macros that make section definition as simple as possible:
+<TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>DATASEG</TT
+> and
+<TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+>
+(similar to <B
+CLASS="COMMAND"
+>tasm</B
+> ideal mode syntax).
+<TT
+CLASS="FUNCTION"
+>END</TT
+> macro marks end of file.</P
+><P
+>A program should have at least <TT
+CLASS="FUNCTION"
+>CODESEG</TT
+> (.text) section
+and <TT
+CLASS="FUNCTION"
+>END</TT
+> macro, other sections are optional.
+<TT
+CLASS="FUNCTION"
+>CODESEG</TT
+> is read-only,
+<TT
+CLASS="FUNCTION"
+>DATASEG</TT
+> and <TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+> are read-write;
+i.e. you can place data in <TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>
+as long as you do not change it.
+You can also define your own sections if you want, but there's very rare need
+to do so. Each section (even if it is empty) enlarges your executable.</P
+><P
+><TT
+CLASS="FUNCTION"
+>START</TT
+> macro tells linker the entry point,
+and <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>must</I
+></SPAN
+> be present (if you are not making a library).</P
+><P
+>Thus, a program's skeleton should look like:</P
+><P
+><PRE
+CLASS="PROGRAMLISTING"
+>%include "system.inc"
+
+CODESEG
+
+START:			;entry point
+
+			;code
+
+DATASEG
+
+			;data
+
+UDATASEG
+
+			;bss
+
+END</PRE
+></P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="s-include.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Asmutils HOWTO</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Include files description</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

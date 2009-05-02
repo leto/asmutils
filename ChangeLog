@@ -1,0 +1,326 @@
+18-Feb-2006:	asmutils 0.18
+
+	- cda2raw, idea, md5 (MH)
+	- ksyms, lsusb (NK)
+	- deflate/inflate (SW)
+	- telnetd (RM)
+	- users (JC)
+	- gi (JH)
+	- tar: bugfixes, archive creation support (JH)
+	- dd: fixed pipe bug, added conv=sync conv=swab,
+	  count blocks, recover lseek (JH)
+	- httpd: no longer runs as root if UID defined (JH),
+	  sendfile support (RM),
+	  fixed 404 error messages for paths with %20's when PROC_HANDLE is defined (RHS)
+	- sh: tab completion fixes (RM),
+	  improved jobs, added umask (JH),
+	  added help, enable, pushd, popd, dirs internals (NK)
+	- cat: added short form of all GNU options (JH)
+	- du: added "-d" option (JH)
+	- host: added "-t" option (WT)
+	- chmod: fixed "chmod 4755" bug (KB)
+	- getty, finger: fixed "lea" compile error (KB)
+	- special bonus: fbcon intro hdragon.asm (MH)
+	- fire256: misc improvements (PF)
+	- system.inc: "last writable section" fix for Linux 2.6.11,
+	  added CPU 386 directive
+	  (also added higher CPU directives to few utilities) (KB)
+	- moved bonus stuff to src/bonus (KB)
+
+17-Aug-2002:	asmutils 0.17
+
+	- free, getty, scons, truss, uptime, wget (TO)
+	- cal, netstat (SL)
+	- du, mkfs.minix (JH)
+	- ftpd (AM, RM)
+	- proxy (IM)
+	- uuencode (CB)
+	- sha1sum (JD)
+	- nm: added 'size' extension (TO, KB)
+	- finger: added 'fingerd' extenstion (TO)
+	- swapon: added 'mkswap' extension (TO)
+	- sleep: added 'usleep' extension (IM)
+	- sh: added clear internal (KB)
+	- httpd: added initial cgi support (SL),
+	  '%' support in filenames (RM),
+	  send default mimetype for unknown extension (KB)
+	- less: added dynamic window size, stdin redirection check,
+	  new keyboard keys support, optimization (KB)
+	- finger: added individual user lookup (TO)
+	- pwd: bugfixes, syscall optimization, and portability fixes
+	  in stat-based version (KB)
+	- cmp: bugfixes and size improvements (KB)
+	- yes: size improvements (KB)
+	- ifconfig: exit code fixes (KB)
+	- mount: try to mount ro when rw fails (KB)
+	- init: wait for rc script to finish (KB)
+	- tar: added contiguous (append) files,
+	  prefix processing,  "tar -xf -" for stdin, chown/grp,
+	  selection of only certain filenames for "tar -x" (JH)
+	- tail: added support for -n CHARSc (JH)
+	- tr: fixed null character processing (JH)
+	- libc: fixed __start_main/fastcall bug (KB)
+	- special bonus: fbcon intro mandelbrot.asm (SW)
+
+03-Mar-2002:	asmutils 0.16
+
+	- cmp, finger, killall/killall5/pidof, mesg, nice, nm, nohup,
+	  rot13, sysctl, test, write (TO)
+	- fdisk, host, tar, telnet (RM)
+	- cut, m_inetd (JH)
+	- pop3d (MM)
+	- scan (SR)
+	- kldload/kldunload/kldstat (KB)
+	- sh: added && and || internals and scripting (JH),
+	  added pipe & redirection support, wildcard extending,
+	  ctrl+z handling, fg, bg, jobs internal commands (RM),
+	  added $environment variable handling and some control-characters (TO),
+	  '#' comments, improved scripting, cleanup and misc fixes (KB)
+	- httpd: added logging (IP||HEADER), err404file command line argument,
+	  added more content types (RM), added extension-content type table,
+	  fixed infinite loop when err404file is missing, size improvement (KB)
+	- grep: added "-b", "-c", "-v" options,
+	  output filename when grepping several files (KB)
+	- hostname: added sysctl-based version (KB)
+	- uname: fixed sysctl-based BSD version (KB)
+	- mount: rewritten to match usual syntax, BSD port (KB)
+	- reboot: added "-p", "-f" options, safety check, BSD port (KB)
+	- lsmod: use sys_query_module if /proc/modules is missing (KB)
+	- ls: fixed FPE when file's mtime is in the future (KB)
+	- touch: fixes and size improvement (KB)
+	- head: fixed reading from stdin (JH)
+	- init: execute rc script on startup (KB)
+	- libc: fixed strlen(), other various fixes (KB)
+	- initial Solaris port (TO)
+	- initial UnixWare port (TO)
+	- rewritten libc port (KB)
+	- ELF macros for BSD and perhaps all other OSes (KB)
+	- include files bugfixes, uptates, improvements and rearrangement (KB)
+	- bootdisk.bash: added creation of /etc/rc startup script (KB)
+	- Asmutils-HOWTO: misc updates (KB)
+
+24-Sep-2001:	asmutils 0.15
+
+	- dc, mknod/mkfifo, od, paste, readlink, tr, which (JH)
+	- clear, fromdos/todos, less, readkey, whoami (TG)
+	- ifconfig/route, tail (JM)
+	- readelf (RR)
+	- watch (RM)
+	- sh: added char-oriented commandline, tab-filename filling,
+	  partial export support, partial CTRL+C handling,
+	  added history handling, improved signal handling (RM)
+	- dd: fixed "k" suffix bug (RM)
+	- true: even more size improvements (RM)
+	- id: added groups=list (JH)
+	- wc: fixed option handling without arguments (JH)
+	- touch: fixed compilation bug (KB)
+	- various FreeBSD and LIBC build fixes (KB)
+	- added bootdisk.bash script to build boot-disk image
+	  with Linux kernel and asmutils binaries (KS)
+        - libm: fixed minor bugs, improved optimizations and test suite,
+	  support for different IA32-CPUs (mostly i686) (NK)
+        - heap.asm: heap manager for Linux (RM)
+	- special bonus: battle "game", resembling corewars (RM)
+
+18-Mar-2001:	asmutils 0.14
+
+	- date, hexdump, ls (BR)
+	- init (KS)
+	- dd (RM)
+	- ping (JM)
+	- factor: increased upper limit to 2^64-1, size improvement (BR)
+	- mount: support for mount options (RM)
+	- libc: added getenv(), optionally treat stack with care (KB)
+	- libm: added testm (NK)
+	- special bonus: textmode game snake (BR)
+	- Asmutils-HOWTO: misc updates (KB)
+
+
+23-Feb-2001:	asmutils 0.13
+
+	- sleep: added nanoseconds support (KB)
+	- libc: added startup stub, PIC fixes (KB)
+	- libm: various improvements (NK)
+	- various FreeBSD build fixes (KB)
+	- include file updates (KB)
+
+
+21-Jan-2001:	asmutils 0.12
+
+	- chown, renice, touch (JL)
+	- asmutils multicall binary (KB)
+	- httpd: support for "Content-Type: text/plain" for text files (KB)
+	- lzss: bugfixes (KB)
+	- libc: rewritten and refined syscall mechanism,
+	  usual functions now work with both cdecl and fastcall,
+	  added PIC support, significant size improvement,
+	  lot of other fixes (KB), added libm (NK)
+	- system.inc: added _xchg macro (PR), _jmp macro (KB)
+	- syscall.inc: added sys_generic fake syscall (PR, KB)
+	- os_linux.inc: sync with Linux 2.4 (KB)
+	- few MCONFIG improvements, DEBUG now works correctly (KB)
+	- leaves, fire256: minor instruction scheduling (NK)
+
+
+10-Dec-2000:	asmutils 0.11
+
+	- sh (AG, KS)
+	- head (JL)
+	- ln and sln merged (KB)
+	- lsmod and rmmod merged (KB)
+	- execve and regs merged (KB)
+	- nc: cleanup and portability fixes (KB)
+	- httpd: squeezed few more bytes (KB)
+	- cp: file creation fixed on BSD, size improvements (TH, KB)
+	- md5sum, rmdsum, rc6crypt, lzss: size improvements and cleanup (KB)
+	- uname: sysctl based version for OpenBSD (TH), size improvements (KB)
+	- cp, mv, rm: *BSD port (KB)
+	- echo: removed extra trailing zero (KB)
+	- extensive cleanup of libcrypto (KB)
+	- syscall.inc: support for syscalls with 6+ arguments (TH, KB)
+	- Asmutils-HOWTO: rewritten using DocBook DTD (KB)
+	- initial AtheOS port (KB)
+	- binaries removed from distribution package (KB)
+
+
+03-Sep-2000:	asmutils 0.10
+
+	- cp, mv, rm (DB)
+	- report (PR)
+	- cpuinfo and cpuspeed merged (PR)
+	- httpd: optional custom 404 error message (KB, MS)
+	- dirname: '/' bugfix (PR)
+	- tee: "-i" bugfix, sys_sigaction instead of sys_signal (TH)
+	- wc: reading from stdin fixed (TH)
+	- libc: fastcall bugfix, clib.asm & string.asm merged (KB)
+	- hostname/domainname, uname/arch: *BSD port (KB)
+	- window.asm extended with input functions (KB)
+	- special bonus: fbcon intro fire256.asm (PF)
+	- lots of new defines added to os_linux.inc, from
+	  linux/fb.h, linux/kd.h, asm/termbits.h, etc (KB)
+	- os dependent include files (os_*.inc) updated
+	  to be in-line with the latest kernel versions (KB)
+	- top Makefile and MCONFIG added, include files separated (KB)
+	- clib.html removed (KB)
+	- OpenBSD port (TH)
+	- NetBSD port (KB)
+	- Asmutils-HOWTO: added section on debugging, README.elf merged (KB)
+
+
+07-Apr-2000:	asmutils 0.09
+
+	- ccd, cpuinfo, cpuspeed, extname (PR)
+	- dirname (AG)
+	- tty (KB)
+	- httpd: various fixes, now works on FreeBSD! (KB)
+	- dmesg: added "-n", "-c" bugfix, empty kernel buffer fix (CL);
+		 buffer-at-one output and other fixes (KB)
+	- ls: ls -l is handled properly (no . is required) (AG)
+	- df: preliminary FreeBSD support (KB)
+	- Asmutils-HOWTO instead of old docs, README updated (KB)
+	- various minor bugfixes (KB)
+
+
+02-Mar-2000:	asmutils 0.08
+
+	- sln (KB)
+	- env (EP)
+	- network syscalls rewritten (KB)
+	- libc: fastcall support (KB)
+	- kill, tee, httpd: portability fixes (KB)
+	- project ported to libc :) (KB)
+	- initial BeOS support (KB)
+	- size improvements (KB)
+	- window.asm and leaves.asm improved (KB)
+	- system macros bugfixes (KB)
+	- df: bugfixes (AG)
+	- id: bugdfix (KB)
+
+
+10-Feb-2000:	asmutils 0.07
+
+	- project ported to FreeBSD (partially) (KB)
+	- serious include files changes (KB)
+	- ls: symlink listing bugfix (FL)
+	- echo: added \e escape (KB)
+	- few portability fixes (KB)
+	- documenation updates (KB)
+	- configuration options moved to Makefile from system.inc (KB)
+
+
+01-Feb-2000:	asmutils 0.06
+
+	- ls, strings, wc, id, ps (DB)
+	- lzss, rmdsum, rc6crypt, nc (CS)
+	- chmod, chroot, grep (KB)
+	- echo: added "-e" & "-E" switches (GNU compliance) (KB)
+	- mkdir: added "-m" (mode) and "-p" (parent) switches (KB)
+	- added lib/rmd.asm (RIPEMD-160 algo) (CS)
+	- ln: bugfix (DW)
+	- working alpha of libc (KB & CS)
+	- _mov (former __setreg32), _add, _sub macros in system.inc (KB)
+	- types.inc merged kernel.inc, config.inc merged system.inc (KB)
+	- source directory structure changed; sstrip, lib/util removed (KB)
+	- special bonus: fbcon intro "leaves" and text window implementation
+	  [src/leaves.asm & src/window.asm] (KB)
+
+
+20-Sep-1999:	asmutils 0.05
+
+	- md5sum (CS)
+	- factor (BR), old factor removed
+	- size improvements due to elf.inc
+	- added lib/crypto/md5.asm (MD5 algo) (CS)
+	- added lib/crypto/rc6.asm (RC6 algo) (CS)
+	- added elf.inc (ELF macros) (BR)
+	- added doc/README.elf (BR)
+	- updated sstrip (BR)
+	- documentation, include files and other various updates (KB)
+
+
+01-Aug-1999:	asmutils 0.04
+
+	- eject (BH)
+	- factor (JW)
+	- chvt/deallocvt (IM)
+	- df (AG)
+	- ln, more (KB)
+	- minor size improvements (KB)
+	- package structure slightly rearranged (KB)
+	- added lib/util/hackbin.pl (IM)
+	- added lib/sstrip (BR)
+	- added defines.inc for defined constants (IM & KB)
+	- added syscall.inc for system calls (KB)
+	- added doc/syscall.html (KB)
+	- "tips and tricks" added to doc/asmutils-source-guide.html (KB)
+	- other documentation updates (KB)
+
+
+05-Jul-1999:	asmutils 0.03
+
+	- mount/umount, softdog, swapon/swapoff,
+	  reboot/halt/poweroff, tee, arch (KB)
+	- pwd: Linux 2.0 support (YI)
+	- kill (BH)
+	- removed bdflush (obsolete) (KB)
+	- all found bugs with 2.0 kernel are fixed (KB)
+	- a lot of documentation updates (KB)
+	- added types.inc (KB)
+	- version.inc became config.inc (KB)
+	- added size/speed optimization (KB)
+
+
+17-Jun-1999:	asmutils 0.02
+
+	- basename, dmesg, httpd, lsmod, true/false, rmmod, yes (IM)
+	- echo, uname, sleep (KB)
+	- cat: fixed bug with 2.0 kernel (KB)
+	- update: added period parameter (KB)
+	- lot of size improvements (KB)
+	- system.inc completely rewritten, new macros added (KB)
+	- basename, sleep, uname and yes are GNU compliant
+
+
+05-Jun-1999:	asmutils 0.01 (initial release)
+
+	- bdflush, cat, hostname, mkdir/rmdir, pwd, sync, update (KB)

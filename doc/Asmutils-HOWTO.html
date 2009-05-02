@@ -1,0 +1,586 @@
+<HTML
+><HEAD
+><TITLE
+>Asmutils HOWTO</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="NEXT"
+TITLE="Program layout"
+HREF="s-layout.html"></HEAD
+><BODY
+CLASS="ARTICLE"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+></A
+>Asmutils HOWTO</H1
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN4"
+>Konstantin Boldyshev</A
+></H3
+><DIV
+CLASS="AFFILIATION"
+><SPAN
+CLASS="ORGNAME"
+>	    <A
+HREF="http://linuxassembly.org"
+TARGET="_top"
+>	    Linux Assembly<A
+NAME="KONST"
+></A
+></A
+>
+	<BR></SPAN
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+>	&nbsp;&nbsp;&nbsp;&nbsp;<TT
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:konst@linuxassembly.org"
+>konst@linuxassembly.org</A
+>&#62;</TT
+><br>
+	</P
+></DIV
+></DIV
+><SPAN
+CLASS="RELEASEINFO"
+>Version 0.9<BR></SPAN
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 1999-2006 Konstantin Boldyshev</P
+><P
+CLASS="PUBDATE"
+>$Date: 2006/02/18 10:08:03 $<BR></P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><A
+NAME="AEN20"
+></A
+><P
+></P
+><P
+>This is the Asmutils HOWTO.</P
+><P
+>This document is to accompany <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>,
+explain <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> internals,
+describe how to write <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> program
+and how to contribute to the project.</P
+><P
+>It targets <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> developers
+and advanced users striving for the secret lore of the assembly entity.</P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+>1. <A
+HREF="Asmutils-HOWTO.html#S-INTRO"
+>Introduction</A
+></DT
+><DD
+><DL
+><DT
+>1.1. <A
+HREF="Asmutils-HOWTO.html#S-LEGAL"
+>Legal blurb</A
+></DT
+><DT
+>1.2. <A
+HREF="Asmutils-HOWTO.html#AEN34"
+>Before you begin</A
+></DT
+><DT
+>1.3. <A
+HREF="Asmutils-HOWTO.html#AEN45"
+>Compiling <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+></A
+></DT
+></DL
+></DD
+><DT
+>2. <A
+HREF="s-layout.html"
+>Program layout</A
+></DT
+><DT
+>3. <A
+HREF="s-include.html"
+>Include files description</A
+></DT
+><DD
+><DL
+><DT
+>3.1. <A
+HREF="s-include.html#INC-SYSTEM"
+>system.inc</A
+></DT
+><DT
+>3.2. <A
+HREF="s-include.html#INC-INCLUDES"
+>includes.inc</A
+></DT
+><DT
+>3.3. <A
+HREF="s-include.html#INC-SYSCALL"
+>syscall.inc</A
+></DT
+><DT
+>3.4. <A
+HREF="s-include.html#INC-ELF"
+>elf.inc</A
+></DT
+></DL
+></DD
+><DT
+>4. <A
+HREF="s-debug.html"
+>Debugging your code</A
+></DT
+><DD
+><DL
+><DT
+>4.1. <A
+HREF="s-debug.html#AEN235"
+>ald</A
+></DT
+><DT
+>4.2. <A
+HREF="s-debug.html#AEN239"
+>gdb</A
+></DT
+><DT
+>4.3. <A
+HREF="s-debug.html#AEN249"
+>strace</A
+></DT
+></DL
+></DD
+><DT
+>5. <A
+HREF="s-contrib.html"
+>Contribution guidelines</A
+></DT
+><DD
+><DL
+><DT
+>5.1. <A
+HREF="s-contrib.html#AEN263"
+>First step</A
+></DT
+><DT
+>5.2. <A
+HREF="s-contrib.html#S-CONTRIB-SOURCE"
+>Source code requirements</A
+></DT
+><DT
+>5.3. <A
+HREF="s-contrib.html#AEN315"
+>Last step</A
+></DT
+><DT
+>5.4. <A
+HREF="s-contrib.html#AEN342"
+>Porting</A
+></DT
+></DL
+></DD
+><DT
+>6. <A
+HREF="s-optimize.html"
+>Optimization, tips and tricks</A
+></DT
+><DT
+>A. <A
+HREF="history.html"
+>History</A
+></DT
+><DT
+>B. <A
+HREF="acknowledgements.html"
+>Acknowledgements</A
+></DT
+><DT
+>C. <A
+HREF="endorsements.html"
+>Endorsements</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-INTRO"
+></A
+>1. Introduction</H1
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="S-LEGAL"
+></A
+>1.1. Legal blurb</H2
+><P
+>Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU
+<A
+HREF="http://www.gnu.org/copyleft/fdl.html"
+TARGET="_top"
+>Free Documentation License</A
+> Version 1.1;
+with no Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN34"
+></A
+>1.2. Before you begin</H2
+><P
+>I assume you are familiar with UNIX and assembly language to an extent
+when you are able to understand what is written here.
+If you are unable to comprehend most of it,
+then probably this manuscript is not for you, sorry.</P
+><P
+>Also, I expect you to dig in and examine source code
+of <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>.
+This document is not intended to replace the source, its goal is only
+to accompany <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> source
+and explain several unclear moments.
+Again, examine ALL source code. Look how command line parsing is done,
+how conditional assembly for different kernel versions is done and so on --
+I am not going to explain all and everything here.</P
+><P
+>Okay, enough ranting.
+This document deals with compiling, developing, debugging, contributing issues,
+it shows some tricks you can use;
+also it describes a set of macros I've developed to write fast and readable,
+that are hiding from you unneeded details and take care of optimization.</P
+><P
+>You may also want to read other documentation represented at the
+<A
+HREF="http://linuxassembly.org"
+TARGET="_top"
+>Linux Assembly</A
+> site
+to get better general (not <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> specific)
+understanding of <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> source code.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN45"
+></A
+>1.3. Compiling <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+></H2
+><P
+>Asmutils are build with the usual compile suite and <B
+CLASS="COMMAND"
+>nasm</B
+>.
+Except <B
+CLASS="COMMAND"
+>nasm</B
+> you will need
+GNU <B
+CLASS="COMMAND"
+>make</B
+>,
+<B
+CLASS="COMMAND"
+>ld</B
+>,
+<B
+CLASS="COMMAND"
+>sh</B
+>,
+<B
+CLASS="COMMAND"
+>ln</B
+>,
+<B
+CLASS="COMMAND"
+>rm</B
+>,
+possibly <B
+CLASS="COMMAND"
+>strip</B
+>
+and possibly something else, depending on your target OS.</P
+><P
+>Preferred program versions are:
+
+<P
+></P
+><UL
+><LI
+><P
+>nasm 0.98.39</P
+></LI
+><LI
+><P
+>ld from GNU binutils 2.13</P
+></LI
+><LI
+><P
+>GNU make 3.79</P
+></LI
+></UL
+></P
+><P
+>Older/newer/other versions may work too.
+GNU <B
+CLASS="COMMAND"
+>make</B
+> is required,
+on BSD systems it is usually called <B
+CLASS="COMMAND"
+>gmake</B
+>,
+and can be found in ports collection.</P
+><P
+>All compile-time configuration is in the <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+> file,
+which has enough comments to figure out what you can do.
+You can try to fallback to libc functions
+instead of using direct system calls by defining
+<TT
+CLASS="LITERAL"
+>SYSCALL=LIBC</TT
+> in <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+>
+if your really want to do so; then you will also need
+<B
+CLASS="COMMAND"
+>gcc</B
+> and libc headers.</P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>Well, to be sincere, if you set <TT
+CLASS="FUNCTION"
+>SYSCALL=LIBC</TT
+>
+do not expect it to work out-of-the-box, even if it compiles flawlessly.
+Instead, prepare to hack <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+> (hint:
+<TT
+CLASS="FUNCTION"
+>STARTUP=y</TT
+> may help if startup stack differs from usual),
+<TT
+CLASS="FILENAME"
+>.inc</TT
+> files and source code to animate this malformation.
+After a couple of sleepless nights you may understand that it is impossible
+to get things right -- you are bypassing libc headers, and on various libc
+versions miscellaneous functions can be implemented as macros,
+or can be just missing (e.g. getdents on glibc 2.2.x).
+You may find out that sometimes libc function which has
+the same name as some system call is not what you think of it.
+Also, expect any other kind of disaster and affliction
+when trying to run what you have built after all,
+especially on weird systems like BeOS or QNX
+(hint: check constants in <TT
+CLASS="FILENAME"
+>os_yourOS.inc</TT
+>).
+Finally, find yourself on the brink of suicide,
+screaming and pulling out your hair,
+and devising your all to developers of your libc.
+They say, life ain't easy.</P
+><P
+>Now that being said.. Some (and perhaps most of) utilities
+<SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>will</I
+></SPAN
+> compile and work as usual.</P
+><P
+>Also, note that building asmutils libc with <TT
+CLASS="FUNCTION"
+>SYSCALL=LIBC</TT
+>
+is not a hmm.. reasonable idea at all.</P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>Several utils (<B
+CLASS="COMMAND"
+>cpuinfo</B
+>, <B
+CLASS="COMMAND"
+>eject</B
+>,
+<B
+CLASS="COMMAND"
+>httpd</B
+>, <B
+CLASS="COMMAND"
+>kill</B
+>, etc)
+have their own additional configuration in the source code.</P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>You can easily cross-compile <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+>.
+With <TT
+CLASS="FUNCTION"
+>ELF_MACROS</TT
+> you will even not need a linker,
+without them linker must support target OS executable format.</P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>On BSD system you may try Linux emulation to run Linux binaries,
+but as a rule native binaries will do the job better.</P
+></BLOCKQUOTE
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="s-layout.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Program layout</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

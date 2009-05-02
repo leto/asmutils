@@ -1,0 +1,100 @@
+
+			       asmutils
+			       ********
+
+			    (version 0.18)
+
+			http://linuxassembly.org
+
+
+Legal stuff
+===========
+
+ All programs in this package are *copyrighted* by their authors,
+ as stated in the source code and in the CREDITS file. The bulk
+ of code is written by Konstantin Boldyshev, with contributions
+ of various hackers all over the world.
+
+ These programs are free software; you can redistribute and/or modify
+ them under the terms of the version 2 (and only version 2) of the GNU
+ General Public License as published by the Free Software Foundation.
+
+ These programs are distributed in the hope that they will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty
+ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the version 2 of the GNU General Public License for more details
+ <http://www.gnu.org/copyleft/gpl.html>.
+
+ Authors are not responsible for any damage these programs can do.
+ This is development version, use solely at your own risk.
+
+Description
+===========
+
+ asmutils is a set of miscellaneous utilities written in assembly language,
+ targeted on embedded systems and small distributions (e.g. installation
+ or rescue disks); also it contains a small libc and a crypto library.
+ It features the smallest possible size and memory requirements,
+ the fastest speed, and offers fairly good functionality.
+ Now project supports Linux and BSD family (FreeBSD, OpenBSD, NetBSD);
+ Unixware, Solaris, and AtheOS support is in beta stage (also there's
+ no more supported BeOS port), and it is /theoretically/ possible to
+ port it to any i386 OS. 
+
+ Another goal of this package is to provide a *portable* framework,
+ and to encourage assembly programmers to write for Linux/UNIX.
+ Usually UNIX is associated with C, and no one wants to deal with assembly..
+ Browse the source, look -- it is simple. Read the docs, start to write,
+ and you will like it; assembly programming is a lot of fun, especially
+ when you deal with a UNIX-like operating systems.
+
+ In addition, this package has some "special bonus" like small intros,
+ games, and other various assembly snippets.
+
+ These utilities also may be useful for system administrators;
+ there were several reports that they have rescued when libc
+ crashed and it was not possible to use usual system utilities.
+
+ Hey, we are a light in the darkness of bloatware. Do you see?
+
+How to install
+==============
+
+ REQUIREMENTS:
+
+	1) i386 (however some programs may require higher CPU);
+	   some programs may require FPU (or kernel emulation)
+
+	2) UNIX-like kernel
+
+	3) ELF/AOUT executable format (actually not a requirement,
+	   you just need to write startup stack preparation
+	   for your executable format on your own)
+
+ For details on compilation process examine doc/Asmutils-HOWTO,
+ then edit MCONFIG, run '[g]make' and hopefully all will be done.
+
+ '[g]make install' creates bin directory in the source tree and stores
+ compiled files there (it doesn't copy files elsewhere, neither to /bin
+ or /usr/bin, nor to /usr/local/bin).
+
+ You may also want to examine a-Linux -- a floppy-based mini-distribution
+ consisting of Linux kernel and asmutils; it is available for download
+ from the asmutils homepage as well.
+
+ WARNING:
+ 
+ Before using any utility first DO LOOK AT ITS SYNTAX; some utils may
+ work not as you have expected. Syntax can be found in the appropriate
+ source file (.asm) from the src directory (do not expect any answer
+ from program on --help switch or without switches).
+
+
+Feedback
+========
+
+ Contributions are welcome! If you want to contribute some code,
+ please read the Asmutils-HOWTO in the doc directory.
+ At least send a bugreport or a success story :)
+
+ $Id: README,v 1.17 2006/02/18 10:13:42 konst Exp $

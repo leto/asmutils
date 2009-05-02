@@ -1,0 +1,287 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from sha1sum.texi on 18 February 2006 -->
+
+<TITLE>Hacker's SHA-1 Documentation</TITLE>
+</HEAD>
+<BODY>
+<H1><EM>Hacker's <CODE>SHA-1</CODE> Documentation</EM></H1>
+<H2>Programmer's Guide (Edition 1.0)</H2>
+<ADDRESS>Julius C. Duque</ADDRESS>
+<P>
+<P><HR><P>
+
+<P>
+Copyright (C) 2002 Julius C. Duque
+
+
+<P>
+Permission is granted to make and distribute verbatim copies of this
+Programmer's Guide, provided the copyright notice and this permission notice
+are preserved on all copies.
+
+
+<P>
+Permission is granted to copy and distribute modified versions of this
+Programmer's Guide under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+
+<P>
+Permission is granted to copy and distribute translations of this Programmer's
+Guide into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved by
+the Free Software Foundation.
+
+
+<P>
+IN NO EVENT SHALL THE AUTHOR BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
+SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF THIS
+PROGRAMMER'S GUIDE. FURTHERMORE, THE AUTHOR SPECIFICALLY DISCLAIMS ANY
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THIS PROGRAMMER'S GUIDE
+IS ON AN "AS IS" BASIS, AND THE AUTHOR HAS NO OBLIGATION TO PROVIDE
+MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+
+
+
+<H1><A NAME="SEC1" HREF="sha1sum_toc.html#TOC1">Acknowledgements</A></H1>
+<P>
+This program would not have been possible if not for Cecchinel Stephan, whose
+email address is <A HREF="mailto:interzone@pacwan.fr">interzone@pacwan.fr</A>. Some lines in <TT>`sha1sum.asm'</TT>
+were taken from <TT>`md5sum.asm'</TT> and <TT>`rmdsum.asm'</TT>, both written by
+Cecchinel.
+
+
+<P>
+I would also like to thank the <EM>ASM Utils Team</EM> and the <EM>NASM Team</EM>
+for producing such fine pieces of utilities.
+
+
+
+
+<H1><A NAME="SEC2" HREF="sha1sum_toc.html#TOC2">Limitations</A></H1>
+<P>
+<CODE>sha1sum</CODE> has only been tested on an Intel Pentium 4 (32-bit) machine,
+running Linux 2.4.18. This means that the maximum file size that can be
+hashed is only
+(2147483647) bytes. Because of this, <CODE>sha1sum</CODE> has only been optimized to
+take advantage of this size limitation. It is very unlikely that <CODE>sha1sum</CODE>
+can still output correct message digests of files whose sizes exceed this limit.
+
+
+<P>
+<TT>`sha1sum'</TT> uses the @command{bswap} instruction, which is available only
+on the 486 and later Intel machines. Therefore, you need at least a 486
+machine to run <TT>`sha1sum'</TT>.
+
+
+<P>
+Unlike <TT>`md5sum.asm'</TT> and <TT>`rmdsum.asm'</TT>, <TT>`sha1sum.asm'</TT> does not read
+from STDIN; there must be at least one input file.
+
+
+
+
+<H1><A NAME="SEC3" HREF="sha1sum_toc.html#TOC3"><TT>`MCONFIG'</TT> Settings</A></H1>
+<P>
+Modifying <TT>`MCONFIG'</TT> to use <SAMP>`SYSCALL = LIBC'</SAMP> produces
+<CODE>Segmentation fault</CODE>, which is otherwise absent when
+<SAMP>`SYSCALL = KERNEL'</SAMP>. To correct this, <SAMP>`STARTUP = y'</SAMP> must also be set.
+
+
+<P>
+Setting <SAMP>`OS = FREEBSD'</SAMP> or <SAMP>`OPTIMIZE = SPEED'</SAMP> or both, does not
+produce any error. Outputs from both settings are also the same.
+
+
+
+
+<H1><A NAME="SEC4" HREF="sha1sum_toc.html#TOC4">Print Functions</A></H1>
+
+<PRE>
+    _mov   ecx, base_N
+    _mov   ebx, regSize
+
+  _PushStack:
+    xor    edx, edx
+    div    ecx
+    push   edx
+    dec    ebx
+    test   ebx, ebx
+    jz     short _PopStack
+    call   _PushStack
+
+  _PopStack:
+    pop    edx
+    _add   edx, '0'
+    cmp    edx, byte '9'
+    jbe    short _PrintChar
+    _add   edx, hexFormat
+
+  _PrintChar:
+    _mov   [t], edx
+    sys_write STDOUT, t, 1
+    ret
+</PRE>
+
+<P>
+The <CODE>PrintNum</CODE> function prints the content of a 32-bit register in any
+base representation. By default, <CODE>PrintNum</CODE> prints in hexadecimal
+notation (base <CODE>16</CODE>).
+
+
+<P>
+The idea behind the workings of <CODE>PrintNum</CODE> is to divide the original
+number by the desired base representation, and then store the resulting
+remainder.
+The integer part of the resulting quotient then becomes the new dividend. The
+division process is repeated until the quotient becomes <CODE>0</CODE>. When
+finished, the remainders are read in the reverse order that they were stored.
+The remainders represent the original number printed in the desired base.
+
+
+<P>
+To use <CODE>PrintNum</CODE>, <CODE>eax</CODE> should already hold the number to be
+printed. <CODE>eax</CODE> is the dividend, and <CODE>ecx</CODE>, which has been previously
+initialized with <VAR>base_N</VAR>, is the divisor. When <CODE>eax</CODE> is divided by
+<CODE>ecx</CODE>, the integer part of the resulting quotient is stored in
+<CODE>eax</CODE>, overwriting its earlier content, and the remainder is stored in
+<CODE>edx</CODE>. <CODE>edx</CODE> is saved by <CODE>push</CODE>-ing it in the stack (by calling
+<CODE>_PushStack</CODE>). The division process is repeated until <CODE>eax</CODE> becomes
+<CODE>0</CODE>, at which time, the contents of the stack are <CODE>pop</CODE>-ped off
+(by calling _PopStack).
+
+
+<P>
+If a different representation is desired, modify the variable <VAR>base_N</VAR>.
+
+
+<P>
+Now, consider this. If the output should be in hexadecimal notation, 4 bits
+are needed to represent one hexadecimal digit. So, a 32-bit register can
+represent, at a maximum, 8 hexadecimal digits. If <CODE>PrintNum</CODE> must always
+print exactly 8 digits, the call to <CODE>_PushStack</CODE> must also be done
+exactly 8 times. In this case, <CODE>ebx</CODE>, which has been initialized with
+<VAR>regSize</VAR>, is used as a counter for calls to <CODE>_PushStack</CODE>. By
+default, <VAR>regSize</VAR> is set to <CODE>8</CODE>.
+
+
+<P>
+The output can also be printed in either lowercase or uppercase. The variable
+<VAR>hexFormat</VAR> can be set to <CODE>0x27</CODE>, if lowercase hexadecimal notation
+is desired, or to <CODE>0x07</CODE>, if the uppercase form is desired.
+
+
+<P>
+Also, notice that the contents of <VAR>W</VAR> are no longer needed during the
+printing of the final message digest. That is why it is safe to use <VAR>t</VAR> to
+also act as the last element of <VAR>W</VAR>.
+
+
+
+
+<H1><A NAME="SEC5" HREF="sha1sum_toc.html#TOC5"><CODE>SHA-1</CODE> Round Functions</A></H1>
+<P>
+The original round functions, as specified in FIPS 180-1 (Secure Hash Standard),
+were replaced with their alternate forms to minimize code size. The round
+functions and their alternates are as follows:
+
+
+<P>
+is bitwise OR,
+is bitwise AND,
+is bitwise exclusive OR, and
+is negation. Notice that the second and fourth round functions are the same, and
+hence, we can code <CODE>sha1sum</CODE> with only three round functions.
+
+
+
+<PRE>
+F0:
+    _mov   ebx, [edi-16]  ; same as_mov ebx, [B]
+    _mov   ecx, [edi-12]  ; same as_mov ecx, [C]
+    _mov   edx, [edi-8]   ; same as_mov edx, [D]
+    ret
+
+F1:
+    call   F0
+    xor    ecx, edx
+    and    ebx, ecx
+    xor    edx, ebx       ; edx now holds result
+    ret
+
+F2:
+    call   F0
+    xor    edx, ecx
+    xor    edx, ebx       ; edx now holds result
+    ret
+
+F3:
+    call   F0
+    or     ebx, ecx
+    and    edx, ebx
+    _mov   ebx, [edi-16]  ; revive old B
+    and    ecx, ebx
+    or     edx, ecx       ; edx now holds result
+    ret
+</PRE>
+
+<P>
+Procedure <CODE>F0</CODE> is executed first before actually executing the round
+functions. <CODE>F0</CODE> uses the following trick. Before calling the round
+functions, <CODE>edi</CODE> should already hold the address of <VAR>W</VAR>. Based
+from the arrangement of variables in <CODE>UDATASEG</CODE>, <VAR>E</VAR> is 4 bytes
+behind <VAR>W</VAR>, <VAR>D</VAR> is 8 bytes behind <VAR>W</VAR>, <VAR>C</VAR> is 12 bytes
+behind <VAR>W</VAR>, and so on.
+
+
+
+
+<H1><A NAME="SEC6" HREF="sha1sum_toc.html#TOC6"><CODE>SHA-1</CODE> Transformation</A></H1>
+<P>
+<CODE>SHA1_TRANSFORM</CODE> does the bulk of the work in computing the message
+digest. As in the code used for the round functions (section <A HREF="sha1sum.html#SEC5"><CODE>SHA-1</CODE> Round Functions</A>), the reference point is also <VAR>W</VAR>. The same
+strategy is also employed, accessing <VAR>A</VAR>, <VAR>B</VAR>, <VAR>C</VAR>, <VAR>D</VAR>,
+and <VAR>E</VAR>, solely from their offset from <VAR>W</VAR>. In addition, the
+alternate method of computing the message digest, as stated in Section
+8 of FIPS 180-1, is used to further cut down on code size. However, this
+will likely lengthen the execution time due to the increased complexity of
+address computations.
+
+
+
+
+<H1><A NAME="SEC7" HREF="sha1sum_toc.html#TOC7">Byte Orientation Issues</A></H1>
+
+<PRE>
+    call   INIT_W
+    sub    edi, byte BLOCKSIZE  ; same as _mov edi, W
+    _mov   ecx, BLOCKSIZE/4   ; transfer is done 4 bytes at a time
+    push   eax
+
+  BYTE_REVERSE:
+    lodsd
+    bswap  eax            ; store in big-endian orientation
+    stosd                 ; transfer contents of buffer to W
+    loop   BYTE_REVERSE
+    pop    eax
+    ret
+</PRE>
+
+<P>
+<CODE>SHA-1</CODE>, by design, favors big-endian machines. For Intel machines,
+which are little-endian, it is, therefore, necessary to first reverse
+the byte orientation of data to be operated on, before actually doing
+any computation. The instruction @command{bswap} does the trick of converting
+big-endian to little-endian orientation, and vice versa. Note, however, that
+@command{bswap} is available only on the 486 and later Intel machines.
+
+
+<P><HR><P>
+This document was generated on 18 February 2006 using
+<A HREF="http://wwwinfo.cern.ch/dis/texi2html/">texi2html</A>&nbsp;1.56k.
+</BODY>
+</HTML>

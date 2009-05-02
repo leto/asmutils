@@ -1,0 +1,266 @@
+<HTML
+><HEAD
+><TITLE
+>Debugging your code</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="PREVIOUS"
+TITLE="Include files description"
+HREF="s-include.html"><LINK
+REL="NEXT"
+TITLE="Contribution guidelines"
+HREF="s-contrib.html"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Asmutils HOWTO</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="s-include.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="s-contrib.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-DEBUG"
+></A
+>4. Debugging your code</H1
+><P
+>First, you must enable debugging information by setting
+<TT
+CLASS="FUNCTION"
+>DEBUG = y</TT
+> in <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+>.
+Then rebuild your code, and try one of the available debuggers:</P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN235"
+></A
+>4.1. ald</H2
+><P
+>There's the <A
+HREF="http://ald.sourceforge.net"
+TARGET="_top"
+>Assembly Language Debugger</A
+>,
+which is designed to work with assembly code,
+and is portable enough to run on Linux and *BSD.
+It is already functional and should be the right choice, check it out!</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN239"
+></A
+>4.2. gdb</H2
+><P
+>Although <B
+CLASS="COMMAND"
+>gdb</B
+> is source-level debugger,
+it can be used to debug pure assembly code
+(the simplest way is to place <TT
+CLASS="FUNCTION"
+>int 3</TT
+>
+instructions as breakpoints across your code).
+And with some trickery you can force
+<B
+CLASS="COMMAND"
+>gdb</B
+> to do what you need
+(unfortunately nasm '-g' switch does not generate
+proper debug info for gdb yet):&#13;</P
+><P
+><PRE
+CLASS="SCREEN"
+>Using GDB with asmutils (by Dmitry Bakhvalov)
+--------------------------------------------
+
+Personally, I use gdb for debugging asmutils. Try this:
+ 
+1) Use the following stuff to compile:
+   $ nasm -f elf -g smth.asm
+   $ ld -o smth smth.o
+
+2) Fire up gdb:
+   $ gdb smth
+
+3) In gdb:
+   (gdb) disassemble _start
+   Place a breakpoint at &#60;_start+1&#62; (If placed at _start the breakpoint
+   wouldn't work, dunno why)
+   (gdb) b *0x8048075
+
+   To step thru the code I use the following macro:
+   (gdb)define n
+   &#62;ni
+   &#62;printf "eax=%x ebx=%x ...etc...",$eax,$ebx,...etc...
+   &#62;disassemble $pc $pc+15
+   &#62;end
+
+   Then start the program with r command and debug with n.
+
+   Hope this helps.</PRE
+></P
+><P
+><PRE
+CLASS="SCREEN"
+>An additional note from ???
+---------------------------
+
+    I have such a macro in my .gdbinit for quite some time now, and it
+    for sure makes life easier. A small difference : I use "x /8i $pc",
+    which guarantee a fixed number of disassembled instructions. Then,
+    with a well chosen size for my xterm, gdb output looks like it is
+    refreshed, and not scrolling.</PRE
+></P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="AEN249"
+></A
+>4.3. strace</H2
+><P
+>Definitely <B
+CLASS="COMMAND"
+>strace</B
+> can help a lot
+(<B
+CLASS="COMMAND"
+>ktrace</B
+> and <B
+CLASS="COMMAND"
+>kdump</B
+>
+on FreeBSD),
+it is used to trace system calls and signals.
+Read its manual page (<B
+CLASS="COMMAND"
+>man strace</B
+>) and
+<B
+CLASS="COMMAND"
+>strace --help</B
+> output for details.</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="s-include.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="s-contrib.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Include files description</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Contribution guidelines</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

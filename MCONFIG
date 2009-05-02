@@ -1,0 +1,219 @@
+# Copyright (C) 1999-2006 Konstantin Boldyshev <konst@linuxassembly.org>
+#
+# MCONFIG -- asmutils configuration stuff
+#
+# $Id: MCONFIG,v 1.21 2006/02/18 10:12:17 konst Exp $
+
+#---------------------------------------------------------------------------#
+
+#			CONFIGURATION PARAMETERS
+
+#---------------------------------------------------------------------------#
+
+# Target operating system. Valid values are:
+# LINUX FREEBSD OPENBSD NETBSD SOLARIS UNIXWARE BEOS ATHEOS
+
+OS = LINUX
+
+# Kernel version of target OS (1.2 = 12, 2.4 = 24, 3.6 = 36, etc)
+
+# Note for Linux 2.6.11 (and above) users: if you experience segfault when
+# running several utilities (e.g. chmod), set KERNEL to 26.  This will force
+# .bss section to be present in executable even if program doesn't need it.
+# All this is needed only when ELF_MACROS are disabled.
+# Up-to-date ld versions (at least 2.13.90.0.4) also force .bss section
+# in executable even if it is not present in object file.
+# So, if your ld always adds .bss - you can just forget about it.
+
+KERNEL = 24
+
+# Optimization method (SIZE/SPEED)
+
+OPTIMIZE = SIZE
+
+# System call convention (KERNEL/LIBC)
+
+SYSCALL = KERNEL
+
+# Target executable format (ELF/AOUT)
+
+EXECUTABLE = ELF
+
+# Use hacked ELF for smaller binaries (when possible)
+# Disable if you have trouble running resulting executables.
+
+ELF_MACROS = y
+
+# Enable debug build
+
+#DEBUG = y
+
+# Write version stamp into executables
+
+#STAMP = y
+
+# Use custom startup code
+# Enable along with SYSCALL=LIBC if gcc fails with -nostartfiles
+# (when linker can't find some external symbols required by libc);
+# you may also need this with OS=BEOS.
+
+#STARTUP = y
+
+#---------------------------------------------------------------#
+
+#			DO NOT EDIT BELOW			#
+
+#---------------------------------------------------------------#
+
+VERSION = 0.18
+
+${OS} = y
+
+#
+# force reasonable defaults for some OSes
+#
+
+ifdef OPENBSD
+EXECUTABLE = AOUT
+endif
+
+#ifdef NETBSD
+#ifneq ($(KERNEL),15)
+#EXECUTABLE = AOUT
+#else
+#EXECUTABLE = ELF
+#endif
+#endif
+
+ifdef BEOS
+STARTUP = y
+ELF_MACROS =
+endif
+
+#
+
+${EXECUTABLE} = y
+
+AS := nasm
+LD := ld
+CC := gcc
+MAKE := gmake
+
+ASVER := $(shell $(AS) -v | cut -d ' ' -f 3)
+#LDVER := $(shell $(LD) -v | cut -d ' ' -f 4)
+CORRECT_ASVER = 0.98.39
+
+#
+# avoid using asmutils during the build process if PATH has '.'
+#
+
+MKDIR := $(shell which mkdir) -p
+CHMOD := $(shell which chmod) +x
+LN := $(shell which ln) -s
+RM := $(shell which rm) -f
+CP := $(shell which cp)
+ifdef LINUX
+CP += -a
+else
+CP += -Rp
+endif
+
+INSTALLDIR=../bin/$(OS)-$(KERNEL)
+
+LDFLAGS :=
+ASFLAGS := -w+orphan-labels -w+macro-params -i../inc/
+DEFINES := -D__$(OS)__ -D__KERNEL__=$(KERNEL) -D__SYSCALL__=__S_$(SYSCALL)__\
+	   -D__OPTIMIZE__=__O_$(OPTIMIZE)__ -D__$(EXECUTABLE)__
+
+ifeq ($(OPTIMIZE),SIZE)
+ASFLAGS += -O99v
+endif
+
+ifeq ($(SYSCALL),LIBC)
+LD = gcc
+ELF_MACROS =
+ifndef STARTUP
+LDFLAGS = -nostartfiles
+endif
+endif
+
+ifdef DEBUG
+ASFLAGS += -g
+ELF_MACROS =
+DEFINES += -DDEBUG
+endif
+
+ifdef BUILD_LIB
+ELF_MACROS =
+endif
+
+ifdef STARTUP
+DEFINES += -D__STARTUP__
+endif
+
+ifdef STAMP
+DEFINES += -DSTAMP_VERSION="'asmutils $(VERSION)'" -DSTAMP_DATE="'$(shell date "+%d-%b-%Y %H:%M")'"
+endif
+
+ifndef ELF
+ELF_MACROS =
+endif
+
+#
+
+ifdef ELF_MACROS
+
+ASFLAGS += -f bin
+DEFINES += -D__ELF_MACROS__
+
+%:	%.asm
+	$(AS) $(ASFLAGS) $(DEFINES) $<
+	$(CHMOD) $*
+
+else
+
+ifdef AOUT
+ASFLAGS += -f aoutb
+STRIP = strip
+ifdef BUILD_SRC
+LDFLAGS += -e _start
+endif
+else
+ASFLAGS += -f elf
+ifndef DEBUG
+LDFLAGS += -s
+endif
+STRIP = strip -R .note -R .comment
+#STRIP = sstrip
+endif
+
+%.o:	%.asm
+	$(AS) $(ASFLAGS) $(DEFINES) $<
+
+%:	%.o
+	$(LD) $(LDFLAGS) -o $* $<
+ifndef DEBUG
+	$(STRIP) $*
+endif
+
+endif	# ELF_MACROS
+
+#
+#
+#
+
+.PHONY:	default all clean install
+
+default: check_asver all
+
+#
+# check assembler version
+#
+
+check_asver:
+ifneq ("$(ASVER)", "$(CORRECT_ASVER)")
+	@echo "------------------------------------------------------------------------------------"
+	@echo "WARNING: your $(AS) version $(ASVER) may miscompile asmutils, please use $(AS) $(CORRECT_ASVER)!"
+	@echo "------------------------------------------------------------------------------------"
+#	@false
+endif

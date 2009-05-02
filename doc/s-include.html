@@ -1,0 +1,685 @@
+<HTML
+><HEAD
+><TITLE
+>Include files description</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="PREVIOUS"
+TITLE="Program layout"
+HREF="s-layout.html"><LINK
+REL="NEXT"
+TITLE="Debugging your code"
+HREF="s-debug.html"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Asmutils HOWTO</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="s-layout.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="s-debug.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-INCLUDE"
+></A
+>3. Include files description</H1
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="INC-SYSTEM"
+></A
+>3.1. system.inc</H2
+><P
+>This file is vital and MUST be included into program code to do anything else;
+it provides the framework and macros described here,
+without it you have to write in usual boring way.</P
+><P
+><TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>DATASEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>END</TT
+>,
+<TT
+CLASS="FUNCTION"
+>I_STRUC</TT
+>,
+<TT
+CLASS="FUNCTION"
+>I_END</TT
+>,
+<TT
+CLASS="FUNCTION"
+>B_STRUC</TT
+>
+macros are here, some other will be added.</P
+><P
+>Also it contains optimizing macros
+<TT
+CLASS="FUNCTION"
+>_mov</TT
+>,
+<TT
+CLASS="FUNCTION"
+>_add</TT
+>,
+<TT
+CLASS="FUNCTION"
+>_sub</TT
+>,
+that perform register assignment, addition and subtraction.
+You can use these macros instead of mov, add, sub instructions --
+if you take care of size, this will produce quite good results
+(do not try to understand how they work :).</P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>when passing negative number in -0x80..0x00 range to
+<TT
+CLASS="FUNCTION"
+>_mov</TT
+>, pass it as hex, i.e. 0xffffffff instead of -1,
+if you want size optimization. This is a "feature" of <B
+CLASS="COMMAND"
+>nasm</B
+>,
+not <TT
+CLASS="FUNCTION"
+>_mov</TT
+> bug.</P
+></BLOCKQUOTE
+></DIV
+><P
+>This file includes two others:
+<A
+HREF="s-include.html#INC-INCLUDES"
+>includes.inc</A
+> and
+<A
+HREF="s-include.html#INC-SYSCALL"
+>syscall.inc</A
+>,
+you do need to include them manually.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="INC-INCLUDES"
+></A
+>3.2. includes.inc</H2
+><P
+>This file stores generic constant definitions and structures
+(from libc headers) that are (as a rule) OS independent.
+If you add some defined constant,
+please do not forget to mention header file it was taken from.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="INC-SYSCALL"
+></A
+>3.3. syscall.inc</H2
+><P
+>File holds system call macros, here are general things to know about them:
+
+<P
+></P
+><UL
+><LI
+><P
+>all parameters are always optional</P
+></LI
+><LI
+><P
+>there can be up to <A
+HREF="s-include.html#SIX-ARG"
+>6</A
+> parameters
+(depends on syscall) on Linux, more on *BSD</P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><A
+NAME="SIX-ARG"
+></A
+><P
+><B
+>Note: </B
+>Passing sixth parameter in <TT
+CLASS="LITERAL"
+>ebp</TT
+>
+is valid only for Linux 2.4, previous Linux versions understand
+only 5 parameters in registers.
+This means that sixth parameter will be passed in <TT
+CLASS="LITERAL"
+>ebp</TT
+>
+only if you have <TT
+CLASS="LITERAL"
+>KERNEL=24</TT
+> (or higher)
+in <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+>.
+This applies to Linux only.</P
+></BLOCKQUOTE
+></DIV
+></LI
+><LI
+><P
+>registers corresponding to parameters are:
+<TT
+CLASS="LITERAL"
+>ebx</TT
+> (1),
+<TT
+CLASS="LITERAL"
+>ecx</TT
+> (2),
+<TT
+CLASS="LITERAL"
+>edx</TT
+> (3),
+<TT
+CLASS="LITERAL"
+>esi</TT
+> (4),
+<TT
+CLASS="LITERAL"
+>edi</TT
+> (5),
+<A
+HREF="s-include.html#SIX-ARG"
+><TT
+CLASS="LITERAL"
+>ebp</TT
+></A
+> (6).</P
+></LI
+><LI
+><P
+><TT
+CLASS="LITERAL"
+>eax</TT
+> register is used as syscall (function)
+number and is always destroyed; after call it contains return value.
+Other registers are not touched.</P
+></LI
+><LI
+><P
+>flags can be touched, you should not assume that flags are the same after call</P
+></LI
+><LI
+><P
+>if there are no parameters, macro assumes that all registers
+(except <TT
+CLASS="LITERAL"
+>eax</TT
+>) are already set before syscall</P
+></LI
+><LI
+><P
+>number of used registers is equal to number of passed parameters + 1
+(<TT
+CLASS="LITERAL"
+>eax</TT
+>)</P
+></LI
+><LI
+><P
+>parameter can be register, memory address, reference,
+constant or reserved word</P
+></LI
+><LI
+><P
+>reserved words are (currently only one): <TT
+CLASS="LITERAL"
+>EMPTY</TT
+>
+(indicates that register is already set before macro and must be skipped).
+It is useful when you need to pass only say third parameter
+and not touch others;
+e.g. <TT
+CLASS="FUNCTION"
+>sys_write EMPTY,EMPTY,1</TT
+> will expand to:
+
+<PRE
+CLASS="PROGRAMLISTING"
+>	_mov	edx,1
+	__syscall write...</PRE
+></P
+></LI
+><LI
+><P
+>registers are set in this order:
+<A
+HREF="s-include.html#SIX-ARG"
+><TT
+CLASS="LITERAL"
+>ebp</TT
+></A
+>,
+<TT
+CLASS="LITERAL"
+>edi</TT
+>,
+<TT
+CLASS="LITERAL"
+>esi</TT
+>,
+<TT
+CLASS="LITERAL"
+>edx</TT
+>,
+<TT
+CLASS="LITERAL"
+>ecx</TT
+>,
+<TT
+CLASS="LITERAL"
+>ebx</TT
+>,
+<TT
+CLASS="LITERAL"
+>eax</TT
+>;
+therefore it is possible to write <TT
+CLASS="FUNCTION"
+>sys_write eax, ebx, ecx</TT
+>;
+it will expand to:
+
+<PRE
+CLASS="PROGRAMLISTING"
+>	mov	edx,ecx
+	mov	ecx,ebx
+	mov	ebx,eax
+	__syscall write...</PRE
+></P
+></LI
+><LI
+><P
+>generated code can be optimized for size (default) or speed</P
+></LI
+></UL
+></P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Warning</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>NEVER use <TT
+CLASS="FUNCTION"
+>__syscall</TT
+> macro in your program directly
+(of course the same applies to <TT
+CLASS="FUNCTION"
+>int 0x80</TT
+> !!).
+This is a VERY BAD thing to do.
+This will MAKE YOUR CODE UNPORTABLE!
+Therefore please use only <TT
+CLASS="FUNCTION"
+>sys_xxx</TT
+> macros!
+See also <A
+HREF="s-contrib.html#S-CONTRIB-SOURCE"
+>this</A
+> section .</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>If some system call is missing, you can add it to this file;
+it's simple, just look how others are done there;
+use sys_syscallname as macro name.</P
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="INC-ELF"
+></A
+>3.4. elf.inc</H2
+><P
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>This file applies only to ELF systems.</I
+></SPAN
+>
+ELF macros are defined here.
+These macros can be (and are, by default) used to reduce the final size
+of an executable. Almost all of them (except <TT
+CLASS="FUNCTION"
+>ELF_AT</TT
+>)
+are integrated into existing program structure.
+To enable them you just need to have <TT
+CLASS="LITERAL"
+>ELF_MACROS = y</TT
+>
+line in <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+> (enabled by default),
+this turns on automatic usage of these macros
+(and you do not have to include <TT
+CLASS="FILENAME"
+>elf.inc</TT
+>).
+And if you will follow simple rules when writing a program,
+then you do not have to carry out two different definitions
+for sections and structures; so, you can compile the same source
+with and without usage of these macros, getting correct code in both cases.
+Rules are simple: use following section order:
+<TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>DATASEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+>,
+<TT
+CLASS="FUNCTION"
+>END</TT
+>,
+and use <TT
+CLASS="FUNCTION"
+>I_STRUC</TT
+> and <TT
+CLASS="FUNCTION"
+>I_END</TT
+>
+to define structures in <TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+>,
+or even better, <TT
+CLASS="FUNCTION"
+>B_STRUC</TT
+> macro,
+instead of <TT
+CLASS="LITERAL"
+>istruc</TT
+> and <TT
+CLASS="LITERAL"
+>iend</TT
+>
+(take any <SPAN
+CLASS="APPLICATION"
+>asmutils</SPAN
+> source as an example),
+Alternatively, you can use macros from elf.inc directly if you want,
+but then you can't compile your source using usual nasm/ld procedure.
+If you want to go this way, take the time and read carefully description
+by Brian Raiter below and comments in the <TT
+CLASS="FILENAME"
+>elf.inc</TT
+>
+(also do read it if you want to understand how they work).
+Personally I think that first way is simpler.</P
+><P
+><PRE
+CLASS="SCREEN"
+>	elf.inc macros description (by Brian Raiter)
+	--------------------------------------------
+
+ELF executable files can contain a great deal of overhead information.
+This overhead is used to define things such as the program's memory
+layout, dynamic libraries which it needs in order to run, and so on.
+The programs in asmutils, however, require almost none of this
+overhead (e.g., by making direct system calls). This permits the
+programs to be much smaller than they would be otherwise. In fact,
+they require less ELF overhead than Nasm and ld expect of any program.
+As a result, these tools create executables with unnecessary overhead.
+Some of this overhead can be removed afterwards using strip and/or
+sstrip, but not all of it.
+
+Therefore, as of version 0.05, the asmutils programs avoid using
+object files entirely, and instead define the ELF executable file
+images directly, byte for byte, using Nasm's "bin" output file format
+and the macros defined in elf.inc. These macros are defined here.
+
+
+BEGIN_ELF
+END_ELF
+
+These are the two main macros in elf.inc. They mark the beginning and
+the end of the program, and must be used together. All assembler
+instructions (and pseudo-instructions such as "DB") should appear
+between these two macros.
+
+Within these two macros, the START label should be defined, which will
+mark the entry point of the program.
+
+BEGIN_ELF uses the ORG pseudo-instruction to indicate where the file
+is to be loaded in memory, and then defines a minimal ELF header and
+program header table. BEGIN_ELF also defines the label _text to point
+to the area immediately following its usage (which is typically the
+beginning of the program).
+
+Note that if instructions do appear after the END_ELF macro, they will
+still be added to the executable file. However, nothing after END_ELF
+will be loaded into memory when the program is executed.
+
+If the program requires no writable data storage outside of the
+stack, then nothing else from elf.inc will be needed.
+
+
+ELF_DATA
+
+This macro is used to reserve writable memory. ELF_DATA should appear
+after the program proper, and before END_ELF. Between these two
+macros, the programmer can define "uninitialized" data using the
+RESB family of pseudo-instructions.
+
+Memory defined in the ELF_DATA section will not take up space in the
+executable file, but will instead be automatically allocated at
+runtime. The data will be initialized to all zeros. The builtin macro
+ALIGNB may also be used here.
+
+ELF_DATA also defines the label _data to point to the area immediately
+following its usage.
+
+Note: do not use the DB family of pseudo-instructions within the
+ELF_DATA section; those should appear before ELF_DATA, within the
+program proper.
+
+
+ELF_BSTRUC strucname [, fieldname ...]
+
+This macro declares an instance of a structure (previously defined
+with the builtin STRUC macro) within an ELF_DATA segment. The
+structure, in order to work with ELF_BSTRUC, must have been defined
+using local labels (i.e., prefixed with a dot) for the field names.
+
+The first argument to ELF_BSTRUC is the name of the structure to use.
+The remaining arguments (if any) list the field names to declare. Only
+those field names specified will be declared as labels within the
+program.
+
+Thus, for example, if the following structure has been defined:
+
+          struc mytype 
+.long:    resd 1 
+.word:    resw 1 
+.byte:    resb 1 
+.str:     resb 32 
+          endstruc
+
+then a program that included the following after ELF_DATA:
+
+mine:     elf_bstruc mytype .long, .word, .str
+
+would have 39 bytes added to its memory image, and could use the
+labels mine.long, mine.word, and mine.str. (mine.byte would not be
+created.)
+
+
+ELF_ISTRUC strucname
+ELF_IAT fieldname [, inst ...]
+ELF_IEND
+
+These macros correspond directly to the builtin macros ISTRUCT, AT,
+and IEND; they differ only in that they declare "uninitialized"
+memory, and thus can be used within an ELF_DATA section.</PRE
+></P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="s-layout.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="s-debug.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Program layout</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Debugging your code</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

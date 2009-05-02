@@ -1,0 +1,143 @@
+This is at least a partial credits-file of people who have contributed
+to the asmutils project, in the Linux Kernel CREDITS format.
+
+Please notify project maintainer if you find any uncertain info here.
+
+It is sorted by name and formatted to allow easy grepping and
+beautification by scripts.  The fields are: name (N), email (E),
+web-address (W), PGP key ID and fingerprint (P), description (D),
+and snail-mail address (S).
+
+$Id: CREDITS,v 1.20 2006/02/18 10:14:11 konst Exp $
+
+----------
+
+N: Dmitry Bakhvalov (DB)
+E: dl@gazeta.ru
+D: cp.asm id.asm mv.asm ps.asm rm.asm strings.asm wc.asm
+
+N: Konstantin Boldyshev (KB)
+E: konst@linuxassembly.org
+D: original asmutils hacker
+
+N: Christopher Brannon (CB)
+E: cbrannon@wilnet1.com
+D: uuencode.asm
+
+N: Julius C. Duque (JD)
+E: jcduque@lycos.com
+D: sha1sum.asm
+
+N: Jorge Contreras A. (JC)
+E: aioros2000@hotmail.com
+D: users.asm
+
+N: Paul Furber (PF) 
+E: paulf@gam.co.za
+D: fire256.asm, framebuffer stuff in os_linux.inc
+
+N: Tiago Gasiba (TG)
+E: ee97034@fe.up.pt
+D: fromdos.asm less.asm readkey.asm whoami.asm
+
+N: Alexandr Gorlov (AG)
+E: winct@mail.ru
+D: df.asm dirname.asm sh.asm
+
+N: Bart Hanssens (BH)
+E: antares@mail.dma.be
+D: eject.asm kill.asm
+
+N: Tani Hosokawa (TH)
+E: unknown@riverstyx.net
+D: initial OpenBSD port
+
+N: Maciej Hrebien (MH)
+E: m_hrebien@wp.pl
+D: idea.asm cda2raw.asm md5.asm
+
+N: Joshua Hudson (JH)
+E: joshudson@hotmail.com
+D: cut.asm dc.asm du.asm m_inetd.asm mkfs.minix.asm mknod.asm
+D: od.asm paste.asm readlink.asm tr.asm which.asm
+
+N: Yuri Ivliev (YI)
+E: yuru@black.cat.kazan.su
+D: pwd.asm (stat based part)
+
+N: Nick Kurshev (NK)
+E: nickols_k@mail.ru
+D: ksyms.asm lsusb.asm libm.c testm.c
+
+N: Scott Lanning (SL)
+E: slanning@theworld.com
+D: cal.asm netstat.asm
+
+N: Jonathan Leto (JL)
+E: jonathan@leto.net
+D: chown.asm head.asm renice.asm touch.asm
+
+N: Indrek Mandre (IM)
+E: indrek@mare.ee
+D: basename.asm chvt.asm dmesg.asm false.asm lsmod.asm
+D: httpd.asm proxy.asm rmmod.asm true.asm yes.asm
+
+N: Rudolf Marek (RM)
+E: marekr2@feld.cvut.cz
+D: dd.asm fdisk.asm game.asm heap.asm host.asm httpd.asm
+D: sh.asm tar.asm watch.asm
+
+N: Michal Medvecky (MM)
+E: m.medvecky@sh.cvut.cz
+D: pop3.asm
+
+N: Attila Monoses (AM)
+E: ata@email.ro
+D: ftpd.asm
+
+N: Jani Monoses (JM)
+E: jani@astechnix.ro
+D: ifconfig.asm ping.asm tail.asm
+
+N: Thomas Ogrisegg (TO)
+E: tom@rhadamanthys.org
+D: cmp.asm finger.asm free.asm getty.asm killall.asm mesg.asm 
+D: nice.asm nm.asm nohup.asm rot13.asm scons.asm swapon.asm (mkswap extension)
+D: sysctl.asm test.asm truss.asm uptime.asm wget.asm write.asm
+D: initial Solaris and Unixware ports
+
+N: Edward Popkov (EP)
+E: evpopkov@carry.neonet.lv
+D: env.asm
+
+N: Brian Raiter (BR)
+E: breadbox@muppetlabs.com
+D: date.asm factor.asm hexdump.asm ls.asm snake.asm
+D: elf.inc
+
+N: H-Peter Recktenwald (PR)
+E: lx@lxhp.in-berlin.de
+D: cpuinfo.asm extname.asm eject.asm (ccd extension)
+D: report.asm errno.inc
+
+N: Radu Bogdan Rusu (RR)
+E: veedee@asmania.com
+D: readelf.asm elfheader.inc
+
+N: Stanislav Ryabenkiy (SR)
+E: stani@ryabenkiy.com
+D: scan.asm
+
+N: Karsten Scheibler (KS)
+E: karsten.scheibler@bigfoot.de
+D: init.asm sh.asm
+
+N: Cecchinel Stephan (CS)
+E: inter.zone@free.fr
+D: md5sum.asm rmdsum.asm lzss.asm nc.asm rc6crypt.asm
+D: rc6, md5, rmd160 algos (libcrypto)
+D: several libc functions
+
+N: Stephan Walter (SW)
+E: stephan.walter@gmx.ch
+D: deflate.asm mandelbrot.asm

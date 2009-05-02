@@ -1,0 +1,306 @@
+<HTML
+><HEAD
+><TITLE
+>Optimization, tips and tricks</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Asmutils HOWTO"
+HREF="Asmutils-HOWTO.html"><LINK
+REL="PREVIOUS"
+TITLE="Contribution guidelines"
+HREF="s-contrib.html"><LINK
+REL="NEXT"
+TITLE="History"
+HREF="history.html"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Asmutils HOWTO</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="s-contrib.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="history.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="S-OPTIMIZE"
+></A
+>6. Optimization, tips and tricks</H1
+><P
+>In fact optimization must be done by assembler.. but..
+optimizing assembler is just a sweet dream yet. So, I've took care of it.
+By default code is optimized for size,
+and you can get up to 20% smaller executable;
+speed optimization in fact is a fake,
+it's just an absence of size optimization :),
+though theoretically you can gain something on pentium processors..
+To enable speed optimization set <TT
+CLASS="LITERAL"
+>OPTIMIZE</TT
+>
+to <TT
+CLASS="LITERAL"
+>SPEED</TT
+> in <TT
+CLASS="FILENAME"
+>MCONFIG</TT
+>.
+Optimization touches register assignment, addition and subtraction
+(<TT
+CLASS="FUNCTION"
+>_mov</TT
+>, <TT
+CLASS="FUNCTION"
+>_add</TT
+>,
+<TT
+CLASS="FUNCTION"
+>_sub</TT
+> macros),
+and section alignment
+(<TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>, <TT
+CLASS="FUNCTION"
+>DATASEG</TT
+> macros).
+Optimization is a work in progress, so results may be better in future versions.</P
+><P
+>If you've gone crazy on binary size,
+you may want to use some of things described below.</P
+><P
+>First of all, try to keep your program in one
+<TT
+CLASS="FUNCTION"
+>CODESEG</TT
+> (.text) section.
+Remember, every new section (even if it is empty)
+increases size of executable file.
+Unless you have any <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>read-write</I
+></SPAN
+> data,
+do not create <TT
+CLASS="FUNCTION"
+>DATASEG</TT
+> (.data section),
+keep your data in <TT
+CLASS="FUNCTION"
+>CODESEG</TT
+>.
+Even if you've got one/two variables with assigned initial values,
+first think of keeping them dynamically on the stack instead of creating
+<TT
+CLASS="FUNCTION"
+>DATASEG</TT
+>.
+And if your initial value is zero,
+place such variable in <TT
+CLASS="FUNCTION"
+>UDATASEG</TT
+> (.bss) section,
+it will be zeroed out by kernel.</P
+><P
+>Use <TT
+CLASS="FUNCTION"
+>_mov</TT
+> macro instead of
+<TT
+CLASS="LITERAL"
+>mov</TT
+> instruction
+(if you do not just assign one register to another),
+this will track several special cases and probably produce smaller code.</P
+><P
+>Avoid using 16-bit registers
+(<TT
+CLASS="LITERAL"
+>ax</TT
+>,
+<TT
+CLASS="LITERAL"
+>bx</TT
+>,
+<TT
+CLASS="LITERAL"
+>cx</TT
+>, etc)
+unless you know exactly what you're doing.
+Every 16-bit instruction will take one more byte (0x66 prefix).
+For instance, <TT
+CLASS="FUNCTION"
+>inc ax</TT
+>
+will produce greater code than <TT
+CLASS="FUNCTION"
+>inc eax</TT
+>.</P
+><P
+>As a sample, here are some assembly examples you can use instead
+of <TT
+CLASS="LITERAL"
+>cmp</TT
+> instruction to produce smaller code:
+
+<PRE
+CLASS="SCREEN"
+>;if eax &#60; 0 (signed compare)
+
+	test	eax,eax
+	js	is_less
+
+;if eax == 0
+
+	test	eax,eax
+	jz	is_zero
+
+;if eax == 0
+
+	or	eax,eax
+	jz	is_zero
+
+;if eax == 1		(and you no more care of its value)
+
+	dec	eax
+	jz	is_one
+
+;if eax == 2		(and you no more care of its value)
+
+	dec	eax
+	dec	eax
+	jz	is_one
+
+
+;if eax == -1		(and you no more care of its value)
+
+	inc	eax
+	jz	is_minus_one
+
+;if eax == -2		(and you no more care of its value)
+
+	inc	eax
+	inc	eax
+	jz	is_minus_one
+
+
+;if -128 &#60; value &#60; 128, you can use
+
+	cmp	eax,byte value ;or -value
+
+;instead of
+	cmp	eax,value</PRE
+>
+
+Seek, and you may find more..</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="s-contrib.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="Asmutils-HOWTO.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="history.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Contribution guidelines</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>History</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

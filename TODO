@@ -1,0 +1,12 @@
+long-term:
+
+- write new utils and improve existing
+- develop libc
+- develop multicall binary
+- port more code to *BSD
+
+short-term:
+
+- develop QNXRTP port
+- test AtheOS code
+- merge basename, dirname, extname (?)
